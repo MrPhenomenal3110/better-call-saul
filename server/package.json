@@ -9,6 +9,16 @@
     "postinstall": "prisma generate",
     "migrate": "npx prisma migrate dev"
   },
+  "_moduleAliases": {
+    "@routes": "dist/routes",
+    "@controllers": "dist/controllers",
+    "@middleware": "dist/middleware",
+    "@utils": "dist/utils",
+    "@lib": "dist/lib",
+    "@models": "dist/types",
+    "@services": "dist/services",
+    "@ai": "dist/ai-service"
+  },
   "author": "Prem Shah",
   "license": "ISC",
   "description": "",
@@ -35,6 +45,7 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "langchain": "^0.3.25",
+    "module-alias": "^2.2.3",
     "openai": "^4.98.0",
     "tsconfig-paths": "^4.2.0",
     "upstash": "^0.0.1"
