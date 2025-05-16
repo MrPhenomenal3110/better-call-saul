@@ -1,0 +1,42 @@
+{
+  "name": "contract_copilot_server",
+  "version": "1.0.0",
+  "main": "server.ts",
+  "scripts": {
+    "dev": "nodemon",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "postinstall": "prisma generate",
+    "migrate": "npx prisma migrate dev"
+  },
+  "author": "Prem Shah",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/cors": "^2.8.18",
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.15.18",
+    "nodemon": "^3.1.10",
+    "prisma": "^6.8.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@langchain/community": "^0.3.42",
+    "@langchain/core": "^0.3.55",
+    "@langchain/openai": "^0.5.10",
+    "@prisma/client": "^6.8.0",
+    "@upstash/redis": "^1.34.9",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "langchain": "^0.3.25",
+    "openai": "^4.98.0",
+    "tsconfig-paths": "^4.2.0",
+    "upstash": "^0.0.1"
+  }
+}
