@@ -30,8 +30,6 @@ export const handleChat = async (input: ChatRequest) => {
     sessionId: input.sessionId.toString(),
   });
 
-  console.log(response);
-
   await prisma.message.create({
     data: {
       content: response.content.toString(),
@@ -63,4 +61,14 @@ export const fetchMessagesByConversationId = async (conversationId: number) => {
   });
 
   return messages;
+};
+
+export const createNewConversation = async (userId: number) => {
+  const conversation = await prisma.conversation.create({
+    data: {
+      userId,
+    },
+  });
+
+  return conversation.id;
 };

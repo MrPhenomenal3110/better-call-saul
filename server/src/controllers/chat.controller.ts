@@ -4,6 +4,7 @@ import {
   fetchMessagesByConversationId,
   handleChat,
   handleFetchConversationsForUser,
+  createNewConversation,
 } from "@services/chat.service";
 import { AuthenticatedRequest } from "@middleware/auth.middleware";
 
@@ -71,6 +72,27 @@ export const handleMessagesController = async (
     );
 
     res.json(response);
+  } catch (err) {
+    console.error("Chat Error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const handleCreateConversation = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    if (!req.userId) {
+      res.status(401).json({ error: "User not authenticated" });
+      return;
+    }
+
+    const { userId } = req;
+
+    const conversationId = await createNewConversation(userId);
+
+    res.json({ conversationId });
   } catch (err) {
     console.error("Chat Error:", err);
     res.status(500).json({ error: "Internal server error" });
