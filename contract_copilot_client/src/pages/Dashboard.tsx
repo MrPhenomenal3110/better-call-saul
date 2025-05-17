@@ -1,53 +1,35 @@
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+
+import type { AppDispatch } from "@stores/index";
+
+import {
+  fetchConversations,
+  setcurrentConversationId,
+} from "@stores/conversations";
+
 import ChatSidebar from "@components/chat/ChatSidebar";
 import ChatWindow from "@components/chat/ChatWindow";
-import LoaderScreen from "@components/LoadingScreen";
-import { useChat } from "@hooks/useChat";
-import { useConversation } from "@hooks/useConversation";
-import { useToast } from "@hooks/useToast";
-import { useChatContext } from "@providers/ChatProvider";
-import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const Dashboard = () => {
-  const { loading, error, conversations, getAllConversationsForUser } =
-    useConversation();
-  const toast = useToast();
-  const {
-    loading: messagesLoading,
-    messages,
-    setMessages,
-    sendHumanMessage,
-    fetchMessages,
-  } = useChat();
-  const { selectedConversationId, setSelectedConversationId } =
-    useChatContext();
+  const dispatch = useDispatch<AppDispatch>();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    getAllConversationsForUser();
+    dispatch(fetchConversations());
   }, []);
 
   useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
+    dispatch(
+      setcurrentConversationId(Number(searchParams.get("conversationId")))
+    );
+  }, [searchParams]);
 
-  return loading ? (
-    <LoaderScreen />
-  ) : (
+  return (
     <div className="flex h-screen bg-black text-white">
-      <ChatSidebar
-        setMessages={setMessages}
-        conversations={conversations}
-        setSelectedConversationId={setSelectedConversationId}
-      />
-      <ChatWindow
-        loading={messagesLoading}
-        messages={messages}
-        fetchMessages={fetchMessages}
-        sendHumanMessage={sendHumanMessage}
-        selectedConversationId={selectedConversationId}
-        getAllConversationsForUser={getAllConversationsForUser}
-      />
+      <ChatSidebar />
+      <ChatWindow />
     </div>
   );
 };

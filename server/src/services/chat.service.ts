@@ -28,6 +28,7 @@ export const handleChat = async (input: ChatRequest) => {
   const response = await invokeChat({
     input: input.message,
     sessionId: input.sessionId.toString(),
+    userId: input.userId,
   });
 
   await prisma.message.create({

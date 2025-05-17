@@ -1,49 +1,46 @@
-import { useConversation } from "@hooks/useConversation";
+import type { AppDispatch } from "stores";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
+import { sendHumanMessage } from "stores/chat";
+import {
+  createNewConversationThunk,
+  fetchConversations,
+} from "@stores/conversations";
+import { selectCurrentConversationId } from "@selectors/conversations";
+import { selectChatLoading } from "@selectors/chat";
 
-type ChatInputProps = {
-  loading: boolean;
-  selectedConversationId: number | null;
-  sendHumanMessage: ({
-    message,
-    conversationId,
-  }: {
-    message: string;
-    conversationId: number;
-  }) => Promise<void>;
-  getAllConversationsForUser: () => Promise<void>;
-};
-
-const ChatInput = ({
-  loading,
-  selectedConversationId,
-  sendHumanMessage,
-  getAllConversationsForUser,
-}: ChatInputProps) => {
+const ChatInput = () => {
   const [input, setInput] = useState("");
-  const { getNewConversationId } = useConversation();
   const [searchParams, setSearchParams] = useSearchParams();
+  const dispatch = useDispatch<AppDispatch>();
+  const currentConversationId = useSelector(selectCurrentConversationId);
+  const messagesLoading = useSelector(selectChatLoading);
 
   const handleSendMessage = async () => {
-    setInput("");
-    if (!selectedConversationId) {
-      const newConversationId = await getNewConversationId();
+    if (!currentConversationId) {
+      const newConversationId = await dispatch(createNewConversationThunk());
       if (newConversationId) {
-        await sendHumanMessage({
-          message: input,
-          conversationId: newConversationId,
-        });
+        setInput("");
+        await dispatch(
+          sendHumanMessage({
+            conversationId: newConversationId,
+            message: input,
+          })
+        );
         searchParams.set("conversationId", newConversationId.toString());
         setSearchParams(searchParams);
       }
-      await getAllConversationsForUser();
+      dispatch(fetchConversations());
       return;
     } else {
-      await sendHumanMessage({
-        message: input,
-        conversationId: selectedConversationId,
-      });
+      dispatch(
+        sendHumanMessage({
+          conversationId: currentConversationId,
+          message: input,
+        })
+      );
+      setInput("");
     }
   };
   return (
@@ -59,7 +56,7 @@ const ChatInput = ({
         onClick={async () => {
           await handleSendMessage();
         }}
-        disabled={loading || !input}
+        disabled={messagesLoading || !input}
         className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-sm"
       >
         Send

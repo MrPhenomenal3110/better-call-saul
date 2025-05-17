@@ -1,28 +1,26 @@
-import type { Conversation, Message } from "@models/entities";
+import { selectConversations } from "@selectors/conversations";
+import { resetMessages } from "@stores/chat";
+import { setcurrentConversationId } from "@stores/conversations";
+import type { AppDispatch } from "@stores/index";
+import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 
-type ChatSidebarProps = {
-  conversations: Conversation[] | null;
-  setMessages: (messages: Message[]) => void;
-  setSelectedConversationId: (id: number | null) => void;
-};
+const ChatSidebar = () => {
+  const dispatch = useDispatch<AppDispatch>();
 
-const ChatSidebar = ({
-  conversations,
-  setMessages,
-  setSelectedConversationId,
-}: ChatSidebarProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const conversations = useSelector(selectConversations);
 
   const handleCreateConversation = () => {
     setSearchParams("");
-    setMessages([]);
-    setSelectedConversationId(null);
+    dispatch(resetMessages());
+    dispatch(setcurrentConversationId(null));
   };
 
   const handleSelect = (id: number) => {
     searchParams.set("conversationId", id.toString());
     setSearchParams(searchParams);
+    dispatch(setcurrentConversationId(id));
   };
   return (
     <div className="w-[260px] bg-[#1e1e1e] p-4 flex flex-col border-r border-gray-700">

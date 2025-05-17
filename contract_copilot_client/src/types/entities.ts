@@ -86,7 +86,7 @@ export interface Conversation {
 export interface Message {
   id: number;
   conversationId: number;
-  sender: "USER" | "TOOL";
+  sender: "USER" | "AI";
   content: string;
   toolUsed?: string;
   createdAt: string;

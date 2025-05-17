@@ -1,5 +1,5 @@
 type Props = {
-  sender: "USER" | "TOOL";
+  sender: "USER" | "AI";
   text: string;
 };
 

@@ -30,7 +30,9 @@
       "@models/*": ["types/*"],
       "@providers/*": ["providers/*"],
       "@hooks/*": ["hooks/*"],
-      "@api/*": ["api/*"]
+      "@api/*": ["api/*"],
+      "@stores/*": ["stores/*"],
+      "@selectors/*": ["selectors/*"]
     }
   },
   "include": ["src"]
