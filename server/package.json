@@ -12,12 +12,13 @@
   "_moduleAliases": {
     "@routes": "dist/routes",
     "@controllers": "dist/controllers",
-    "@middleware": "dist/middleware",
-    "@utils": "dist/utils",
-    "@lib": "dist/lib",
-    "@models": "dist/types",
     "@services": "dist/services",
-    "@ai": "dist/ai-service"
+    "@models": "dist/types",
+    "@middlewares": "dist/middlewares",
+    "@config/*": "dist/config",
+    "@utils": "dist/utils",
+    "@ai": "dist/ai-service",
+    "@lib": "dist/lib"
   },
   "author": "Prem Shah",
   "license": "ISC",
