@@ -5,14 +5,12 @@ import { combineReducers, type Action } from "redux";
 import chatReducer from "./chat";
 import conversationReducer from "./conversations";
 import { configureStore, type ThunkDispatch } from "@reduxjs/toolkit";
-// import other reducers as needed
-// import userReducer from './user';
-// import checklistReducer from './checklist';
+import modalReducer from "./modal";
 
 const rootReducer = combineReducers({
   chat: chatReducer,
   conversation: conversationReducer,
-  // checklist: checklistReducer,
+  modal: modalReducer,
 });
 
 const store = configureStore({
@@ -21,6 +19,5 @@ const store = configureStore({
 
 export default store;
 
-// Optional: export RootState type for use in useSelector
 export type RootState = ReturnType<typeof rootReducer>;
 export type AppDispatch = ThunkDispatch<RootState, unknown, Action>;

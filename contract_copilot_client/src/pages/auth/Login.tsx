@@ -7,6 +7,7 @@ import type { AuthPayload } from "@models/apiData";
 import InputField from "@components/InputField";
 import { useToast } from "@hooks/useToast";
 import { useUser } from "@hooks/useUser";
+import { Button } from "@components/Button";
 
 const Login = () => {
   const {
@@ -35,8 +36,8 @@ const Login = () => {
   };
 
   return (
-    <div className="w-full h-full px-[25%]!  flex items-center justify-center min-h-screen bg-black">
-      <div className="w-full h-[50vh] p-8! border-[0.5px] border-white rounded-xl shadow-lg shadow-white text-blue-200 flex flex-col items-center justify-start gap-4">
+    <div className="w-full h-full px-[25%]!  flex items-center justify-center min-h-screen bg-gray-200">
+      <div className="bg-white w-full h-[50vh] p-8! rounded-xl shadow-lg text-gray-800 flex flex-col items-center justify-start gap-4 border border-gray-300">
         <div className="flex items-center font-extrabold justify-center text-3xl">
           LOGIN
         </div>
@@ -48,23 +49,23 @@ const Login = () => {
             label="Email"
             error={errors.email}
             {...register("email", { required: "Email is required" })}
-            placeholder="Enter your email"
+            placeholder="jimmy@mcgill.com"
             type="email"
           />
           <InputField
             label="Password"
             error={errors.password}
             {...register("password", { required: "Password is required" })}
-            placeholder="Enter your password"
+            placeholder="Kim@123"
             type="password"
           />
-          <button
+          <Button
             type="submit"
             disabled={!isValid}
             className="p-4! w-full border border-gray-500 h-fit outline-0 cursor-pointer rounded-xl box-border hover:border-gray-50 transition-all duration-300"
           >
             Login
-          </button>
+          </Button>
         </form>
         <div className="text-center text-xs text-blue">
           Don't have an account yet?{" "}

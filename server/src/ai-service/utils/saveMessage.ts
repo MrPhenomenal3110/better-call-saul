@@ -11,7 +11,7 @@ export const saveMessage = async ({
   contractId,
 }: {
   conversationId: number;
-  sender: "USER" | "AI" | "TOOL";
+  sender: "USER" | "AI" | "TOOL" | "USER_FILE_UPLOAD";
   content: string;
   toolUsed?: string;
   userId: number;

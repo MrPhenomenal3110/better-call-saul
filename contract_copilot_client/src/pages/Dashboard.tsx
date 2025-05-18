@@ -11,6 +11,7 @@ import {
 import ChatSidebar from "@components/chat/ChatSidebar";
 import ChatWindow from "@components/chat/ChatWindow";
 import { useSearchParams } from "react-router-dom";
+import FileInputModal from "@components/chat/FileInputModal";
 
 const Dashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -30,6 +31,7 @@ const Dashboard = () => {
     <div className="flex h-screen bg-black text-white">
       <ChatSidebar />
       <ChatWindow />
+      <FileInputModal />
     </div>
   );
 };

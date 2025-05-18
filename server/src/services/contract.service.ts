@@ -1,13 +1,13 @@
+import { handleChat } from "@services/chat.service";
 import { uploadToSupabaseStorage } from "@lib/supabaseS3Uploader";
 import { extractTextFromPDF } from "@ai/loaders/pdfLoader";
 import { splitTextIntoChunks } from "@ai/loaders/textSplitter";
 import { embedAndStoreChunks } from "@ai/vector-store/storeEmbeddings";
 import { prisma } from "@lib/prisma";
 import { createReadStream, statSync } from "fs";
-import slugify from "slugify";
 import { promises as fsPromises } from "fs";
-import path from "path";
-import { v4 as uuidv4 } from "uuid";
+
+import slugify from "slugify";
 
 type UploadContractParams = {
   filePath: string; // local tmp path (from multer or similar)
@@ -24,6 +24,7 @@ export async function handleContractUpload({
   title,
   sessionId,
 }: UploadContractParams) {
+  console.log(" ggggggggggggg ", sessionId);
   const safeFilename = slugify(originalFilename, { lower: true, strict: true });
   const key = `contracts/${userId}-${sessionId}-${safeFilename}-${new Date().toISOString()}`;
   const { size } = statSync(filePath);
@@ -54,6 +55,14 @@ export async function handleContractUpload({
   const chunks = splitTextIntoChunks(content);
 
   await embedAndStoreChunks(chunks, sessionId);
+
+  await handleChat({
+    contractId: contract.id,
+    message:
+      "Acknowledge, understand the document and summarize it to me. You can also ask me what would I like next",
+    sessionId,
+    userId,
+  });
 
   return { contractId: contract.id, message: "Upload and indexing successful" };
 }

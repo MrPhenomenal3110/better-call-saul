@@ -13,7 +13,7 @@ export async function uploadContractController(
       return;
     }
 
-    const { title, sessionId } = req.body;
+    const { title, sessionId }: { title: string; sessionId: string } = req.body;
     if (!title || !sessionId) {
       res
         .status(400)

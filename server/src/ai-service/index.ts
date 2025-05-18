@@ -1,22 +1,20 @@
-import {
-  AIMessage,
-  BaseMessage,
-  HumanMessage,
-  ToolMessage,
-} from "@langchain/core/messages";
-import { saveMessage } from "@ai//utils/saveMessage";
-import llm from "@ai/llm/openRouterLLM";
-import { setName, setNameSchema } from "@ai/tools/setName";
-import { createContextInjectedTool } from "@ai/tools/context/contextInjector";
+import { prepareMessages } from "./getMessages";
+import { getTools } from "./toolRegistry";
+import { handleToolCalls } from "./toolHandler";
+import { getChatHistory } from "./getChatHistory";
+import { getDocumentContext } from "./getDocumentContext";
+import { saveMessage } from "@ai/utils/saveMessage";
+import { AsyncLocalStorageProviderSingleton } from "@langchain/core/singletons";
 import { setContext } from "@ai/tools/context";
-import { getVectorStore } from "@ai/vector-store/index";
-import { Message } from "@prisma/client";
-import prisma from "@lib/prisma";
+
+import llm from "@ai/llm/openRouterLLM";
+import { classifyIntents } from "./utils/classifyIntent";
+import { PromptStrategyType } from "@models/promptStrategy";
 
 export const invokeChat = async ({
   input,
-  userId,
   sessionId,
+  userId,
   contractId,
 }: {
   input: string;
@@ -24,105 +22,74 @@ export const invokeChat = async ({
   userId: number;
   contractId?: number;
 }) => {
-  setContext({ userId, sessionId });
+  return await AsyncLocalStorageProviderSingleton.runWithConfig(
+    {},
+    async () => {
+      setContext({ userId, sessionId });
 
-  const tools = [
-    createContextInjectedTool(setName, userId, {
-      name: "setName",
-      schema: setNameSchema,
-      description: "Updates the user name",
-    }),
-  ];
+      const intents = await classifyIntents(input);
+      const allTools = getTools(userId);
+      const tools = allTools.filter((tool) =>
+        intents.includes(tool.name as PromptStrategyType)
+      );
+      const toolMapping = Object.fromEntries(tools.map((t) => [t.name, t]));
+      const llmWithTools = llm.bindTools(tools);
 
-  const toolMapping = Object.fromEntries(tools.map((t) => [t.name, t]));
-  const llmWithTools = llm.bindTools(tools);
+      const [history, docContext] = await Promise.all([
+        getChatHistory(input, sessionId),
+        getDocumentContext(input, sessionId),
+      ]);
 
-  const chatHistoryCollectionName = `chat-history-${sessionId}`;
+      const messages = await prepareMessages({
+        input,
+        history,
+        docContext,
+        intents,
+      });
 
-  const chatHistoryStore = await getVectorStore(chatHistoryCollectionName);
+      console.log("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG", contractId);
 
-  const history = await chatHistoryStore.similaritySearch(input, 5);
+      if (contractId) {
+        await saveMessage({
+          conversationId: sessionId,
+          sender: "USER_FILE_UPLOAD",
+          content: input,
+          userId,
+          contractId,
+        });
+      } else {
+        await saveMessage({
+          conversationId: sessionId,
+          sender: "USER",
+          content: input,
+          userId,
+        });
+      }
 
-  const docContextCollectionName = `document-${sessionId}`;
+      let llmOutput = await llmWithTools.invoke(messages);
+      messages.push(llmOutput);
 
-  const docContextStore = await getVectorStore(docContextCollectionName);
-
-  const doc = await docContextStore.similaritySearch(input, 5);
-
-  const recentMessages = await prisma.message.findMany({
-    where: { conversationId: sessionId },
-    orderBy: { createdAt: "desc" },
-    take: 10,
-  });
-
-  const contextText = history.map((doc) => doc.pageContent).join("\n---\n");
-
-  const docContext = doc.map((info) => info.pageContent).join("\n---\n");
-
-  const messages: BaseMessage[] = [
-    new AIMessage(`Context:\n${contextText}`),
-    new AIMessage(`Document context:\n ${docContext}`),
-    new HumanMessage(input),
-  ];
-
-  console.log(messages);
-
-  await saveMessage({
-    conversationId: sessionId,
-    sender: "USER",
-    content: input,
-    userId,
-    contractId,
-  });
-
-  console.log(messages);
-
-  const llm_output = await llmWithTools.invoke(messages);
-
-  messages.push(llm_output);
-
-  if (llm_output.tool_calls && llm_output.tool_calls.length > 0) {
-    for (const toolCall of llm_output.tool_calls) {
-      const selectedTool = toolMapping[toolCall.name];
-      const toolResult = await selectedTool.invoke(toolCall);
+      if (llmOutput.tool_calls?.length) {
+        llmOutput = await handleToolCalls({
+          llmWithTools,
+          messages,
+          toolCalls: llmOutput.tool_calls,
+          toolMapping,
+          userId,
+          sessionId,
+          contractId,
+        });
+      }
 
       await saveMessage({
         conversationId: sessionId,
-        sender: "TOOL",
-        content: toolResult.content,
-        toolUsed: selectedTool.name,
+        sender: "AI",
+        content: llmOutput.content.toString(),
         userId,
         contractId,
       });
 
-      messages.push(
-        new ToolMessage({
-          tool_call_id: toolCall.id ?? "",
-          content: toolResult.content,
-        })
-      );
+      return llmOutput;
     }
-
-    const finalResponse = await llmWithTools.invoke(messages);
-
-    await saveMessage({
-      conversationId: sessionId,
-      sender: "AI",
-      content: finalResponse.content.toString(),
-      userId,
-      contractId,
-    });
-
-    return finalResponse;
-  } else {
-    await saveMessage({
-      conversationId: sessionId,
-      sender: "AI",
-      content: llm_output.content.toString(),
-      userId,
-      contractId,
-    });
-  }
-
-  return llm_output;
+  );
 };

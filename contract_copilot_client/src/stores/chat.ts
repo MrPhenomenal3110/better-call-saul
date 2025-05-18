@@ -1,9 +1,17 @@
 // src/store/chat.js
 import type { Dispatch } from "redux";
-import { getMessages, sendMessage } from "@api/chat";
+import {
+  createNewConversation,
+  getMessages,
+  sendMessage,
+  uploadPdf,
+} from "@api/chat";
 import type { Action } from "@models/action";
 import type { SendMessageData } from "@models/apiData";
 import type { Message } from "@models/entities";
+import type { SetURLSearchParams } from "react-router-dom";
+import { fetchConversations } from "./conversations";
+import type { AppDispatch } from ".";
 
 // Action Types
 const LOAD_MESSAGES = "my-app/chat/LOAD_MESSAGES";
@@ -122,5 +130,39 @@ export const sendHumanMessage =
       dispatch(sendMessageSuccess(assistantMessage));
     } catch (e: any) {
       dispatch(sendMessageFailure(e?.message || "Failed to send message"));
+    }
+  };
+
+export const uploadFile =
+  (
+    formData: FormData,
+    toast: any,
+    searchParams: URLSearchParams,
+    setSearchParams: SetURLSearchParams
+  ) =>
+  async (dispatch: AppDispatch) => {
+    let sessionId = formData.get("sessionId");
+
+    try {
+      if (!sessionId) {
+        const data = await createNewConversation();
+        sessionId = data?.conversationId;
+        if (sessionId) {
+          searchParams.set("conversationId", sessionId.toString());
+          formData.set("sessionId", sessionId.toString());
+        }
+      }
+
+      const response = await uploadPdf(formData);
+
+      if (response?.contractId && sessionId) {
+        setSearchParams(searchParams);
+        dispatch(fetchConversations());
+      } else {
+        toast.error("Error uploading PDF. Please try again.");
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      toast.error("An unexpected error occurred while uploading.");
     }
   };

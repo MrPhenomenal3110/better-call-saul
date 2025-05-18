@@ -9,6 +9,11 @@ import {
 } from "@stores/conversations";
 import { selectCurrentConversationId } from "@selectors/conversations";
 import { selectChatLoading } from "@selectors/chat";
+import { Button } from "@components/Button";
+import ArrowRight from "assets/arrow-right.svg";
+import Pin from "assets/pin.svg";
+import { toggleModal } from "@stores/modal";
+import { MODAL_NAMES } from "@utils/constants";
 
 const ChatInput = () => {
   const [input, setInput] = useState("");
@@ -43,24 +48,44 @@ const ChatInput = () => {
       setInput("");
     }
   };
+
+  const handleFileUploadModalOpen = () => {
+    dispatch(toggleModal(MODAL_NAMES.FILE_INPUT_MODAL, true));
+  };
+
   return (
-    <div className="p-4 border-t border-gray-700 bg-black flex items-center gap-2">
+    <div className="p-4 bg-white flex items-center gap-2">
       <input
         type="text"
         placeholder="Type a message..."
-        className="flex-1 px-4 py-2 rounded-lg bg-[#1e1e1e] text-white outline-none border border-gray-600 focus:border-white"
+        className="flex-1 pl-4 pr-32 py-4 rounded-lg bg-white text-gray-800 outline-none relative border border-gray-300 focus:ring-2 focus:ring-blue-500"
         value={input}
         onChange={(e) => setInput(e.target.value)}
-      />
-      <button
-        onClick={async () => {
-          await handleSendMessage();
+        onKeyDown={async (e) => {
+          if (e.key === "Enter") {
+            await handleSendMessage();
+          }
         }}
-        disabled={messagesLoading || !input}
-        className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-sm"
-      >
-        Send
-      </button>
+      />
+      <div className="flex flex-row items-center justify-center gap-2 absolute right-8">
+        <Button
+          onClick={handleFileUploadModalOpen}
+          variant="secondary"
+          disabled={messagesLoading}
+          className="rounded-full! p-4 text-sm cursor-pointer"
+        >
+          <img className="h-4 w-4" src={Pin} alt="pin" />
+        </Button>
+        <Button
+          onClick={async () => {
+            await handleSendMessage();
+          }}
+          disabled={messagesLoading || !input}
+          className="bg-blue-600 hover:bg-blue-500 rounded-full! p-4 text-sm cursor-pointer"
+        >
+          <img className="h-4 w-4" src={ArrowRight} alt="right arrow" />
+        </Button>
+      </div>
     </div>
   );
 };

@@ -32,7 +32,8 @@
       "@hooks/*": ["hooks/*"],
       "@api/*": ["api/*"],
       "@stores/*": ["stores/*"],
-      "@selectors/*": ["selectors/*"]
+      "@selectors/*": ["selectors/*"],
+      "@utils/*": ["utils/*"]
     }
   },
   "include": ["src"]

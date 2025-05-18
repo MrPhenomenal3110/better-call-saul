@@ -34,3 +34,13 @@ export const sendMessage = async ({
 
   return res.data;
 };
+
+export const uploadPdf = async (formData: FormData) => {
+  const res = await client.post("/contract/upload", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return res.data;
+};
