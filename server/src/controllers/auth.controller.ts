@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import * as AuthService from "@services/auth.service";
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const user = await AuthService.register(req.body);
     res.json({ success: true, data: user });

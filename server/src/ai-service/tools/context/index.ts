@@ -1,8 +1,7 @@
 // context.ts
 export interface RequestContext {
   userId: number;
-  sessionId: string;
-  // ... other context fields
+  sessionId: number;
 }
 
 let currentContext: RequestContext | null = null;

@@ -6,12 +6,12 @@ import {
   handleFetchConversationsForUser,
   createNewConversation,
 } from "@services/chat.service";
-import { AuthenticatedRequest } from "@middleware/auth.middleware";
+import { AuthenticatedRequest } from "@middlewares/auth.middleware";
 
 export const handleChatController = async (
   req: AuthenticatedRequest,
   res: Response
-) => {
+): Promise<void> => {
   try {
     const { message, sessionId, contractId } = req.body;
 

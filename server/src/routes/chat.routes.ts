@@ -5,7 +5,7 @@ import {
   handleMessagesController,
   handleCreateConversation,
 } from "@controllers/chat.controller";
-import { authenticate } from "@middleware/auth.middleware";
+import { authenticate } from "@middlewares/auth.middleware";
 
 const router = Router();
 

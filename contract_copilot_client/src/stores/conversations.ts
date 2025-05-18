@@ -106,17 +106,14 @@ export const fetchConversations = () => async (dispatch: Dispatch<Action>) => {
   }
 };
 
-export const createNewConversationThunk =
-  () =>
-  async (dispatch: Dispatch<Action>): Promise<number | null> => {
-    try {
-      const res = await createNewConversation();
-      const newId = res.conversationId;
+export const createNewConversationThunk = async (): Promise<number | null> => {
+  try {
+    const res = await createNewConversation();
+    const newId = res.conversationId;
 
-      dispatch(setcurrentConversationId(newId)); // ✅ select it immediately
-      return newId;
-    } catch (e: any) {
-      // optionally handle error
-      return null;
-    }
-  };
+    return newId;
+  } catch (e: any) {
+    // optionally handle error
+    return null;
+  }
+};

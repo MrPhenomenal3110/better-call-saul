@@ -16,7 +16,7 @@
       "@controllers/*": ["src/controllers/*"],
       "@services/*": ["src/services/*"],
       "@models/*": ["src/types/*"],
-      "@middleware/*": ["src/middleware/*"],
+      "@middlewares/*": ["src/middlewares/*"],
       "@config/*": ["src/config/*"],
       "@utils/*": ["src/utils/*"],
       "@ai/*": ["src/ai-service/*"],

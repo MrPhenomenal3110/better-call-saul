@@ -19,7 +19,7 @@ const ChatInput = () => {
 
   const handleSendMessage = async () => {
     if (!currentConversationId) {
-      const newConversationId = await dispatch(createNewConversationThunk());
+      const newConversationId = await createNewConversationThunk();
       if (newConversationId) {
         setInput("");
         await dispatch(

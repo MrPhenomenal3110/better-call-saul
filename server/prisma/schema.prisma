@@ -14,7 +14,6 @@ model User {
   passwordHash String
   createdAt     DateTime  @default(now())
   contracts     Contract[]
-  questions     Question[]
   toolsExecuted ToolExecution[]
   conversations Conversation[]
 }
@@ -26,35 +25,12 @@ model Contract {
   title           String
   originalFilename String
   uploadPath      String
-  content         String
+  collectionName String
   createdAt       DateTime          @default(now())
-  sections        ContractSection[]
-  questions       Question[]
   checklistItems  ChecklistItem[]
   loopholes       Loophole[]
   toolsExecuted   ToolExecution[]
   conversations   Conversation[]
-}
-
-model ContractSection {
-  id         Int      @id @default(autoincrement())
-  contract   Contract @relation(fields: [contractId], references: [id])
-  contractId Int
-  heading    String
-  content    String
-  chunkIndex Int
-}
-
-model Question {
-  id         Int       @id @default(autoincrement())
-  contract   Contract  @relation(fields: [contractId], references: [id])
-  contractId Int
-  user       User      @relation(fields: [userId], references: [id])
-  userId     Int
-  question   String
-  answer     String
-  createdAt  DateTime  @default(now())
-  sources    Source[]
 }
 
 model ChecklistItem {
@@ -76,6 +52,7 @@ enum Status {
 enum Role {
   USER
   TOOL
+  AI
 }
 
 model Loophole {
@@ -107,23 +84,6 @@ model ToolExecution {
   executedAt DateTime  @default(now())
 }
 
-model Source {
-  id         Int       @id @default(autoincrement())
-  question   Question  @relation(fields: [questionId], references: [id])
-  questionId Int
-  sourceType SourceType
-  title      String
-  url        String?
-  summary    String
-}
-
-enum SourceType {
-  CASE_LAW
-  STATUTE
-  ARTICLE
-  OTHER
-}
-
 model Conversation {
   id          Int       @id @default(autoincrement())
   user        User      @relation(fields: [userId], references: [id])
@@ -141,7 +101,7 @@ model Message {
   conversation    Conversation @relation(fields: [conversationId], references: [id])
   conversationId  Int
   sender          Role         // USER or TOOL
-  content         String
+  content         String @db.Text
   toolUsed        String?
   createdAt       DateTime     @default(now())
 }
