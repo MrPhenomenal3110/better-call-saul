@@ -48,8 +48,8 @@ const ChatMessage = ({ sender, text, toolUsed }: Props) => {
         className={classNames(
           "max-w-[70%] shadow-lg py-4 px-6 rounded-xl text-sm",
           {
-            "bg-blue-500 text-white": isUser,
-            "bg-white text-gray-800": !isUser,
+            "bg-blue-500 text-white rounded-tr-none": isUser,
+            "bg-white text-gray-800 rounded-tl-none": !isUser,
           }
         )}
       >

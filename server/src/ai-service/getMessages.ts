@@ -21,7 +21,7 @@ export const prepareMessages = async ({
       "Summarize the following contract text. Make sure the content you return does not look cluttered. Style the markdown accordingly. Also, use emojis for main heading if possible not necessary at all. Try to use points.",
     qa: "Answer questions based on the contract and prior context. Make sure the content you return does not look cluttered. Style the markdown accordingly. Also, use emojis for main heading if possible not necessary at all. Try to use points.",
     setName:
-      "When user provides their name, when intorducing greeting Update/Set the user's name in the db using the setName tool call",
+      "Do not keep asking the user for name continuously if you have it in the context. When user provides their name, when introducing greeting Update/Set the user's name in the db using the setName tool call",
   };
 
   const primaryIntent = intents[0] || "general";

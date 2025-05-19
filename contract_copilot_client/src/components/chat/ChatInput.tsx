@@ -15,7 +15,12 @@ import Pin from "assets/pin.svg";
 import { toggleModal } from "@stores/modal";
 import { MODAL_NAMES } from "@utils/constants";
 
-const ChatInput = () => {
+type ChatInputProps = {
+  isAiTyping: boolean;
+  setIsAiTyping: (newState: boolean) => void;
+};
+
+const ChatInput = ({ isAiTyping, setIsAiTyping }: ChatInputProps) => {
   const [input, setInput] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const dispatch = useDispatch<AppDispatch>();
@@ -23,6 +28,8 @@ const ChatInput = () => {
   const messagesLoading = useSelector(selectChatLoading);
 
   const handleSendMessage = async () => {
+    console.log("log");
+    setIsAiTyping(true);
     if (!currentConversationId) {
       const newConversationId = await createNewConversationThunk();
       if (newConversationId) {
@@ -36,17 +43,17 @@ const ChatInput = () => {
         searchParams.set("conversationId", newConversationId.toString());
         setSearchParams(searchParams);
       }
-      dispatch(fetchConversations());
-      return;
+      await dispatch(fetchConversations());
     } else {
-      dispatch(
+      setInput("");
+      await dispatch(
         sendHumanMessage({
           conversationId: currentConversationId,
           message: input,
         })
       );
-      setInput("");
     }
+    setIsAiTyping(false);
   };
 
   const handleFileUploadModalOpen = () => {
@@ -71,7 +78,7 @@ const ChatInput = () => {
         <Button
           onClick={handleFileUploadModalOpen}
           variant="secondary"
-          disabled={messagesLoading}
+          disabled={messagesLoading || isAiTyping}
           className="rounded-full! p-4 text-sm cursor-pointer"
         >
           <img className="h-4 w-4" src={Pin} alt="pin" />
@@ -80,7 +87,8 @@ const ChatInput = () => {
           onClick={async () => {
             await handleSendMessage();
           }}
-          disabled={messagesLoading || !input}
+          loading={isAiTyping}
+          disabled={messagesLoading || !input || isAiTyping}
           className="bg-blue-600 hover:bg-blue-500 rounded-full! p-4 text-sm cursor-pointer"
         >
           <img className="h-4 w-4" src={ArrowRight} alt="right arrow" />

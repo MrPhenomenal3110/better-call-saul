@@ -66,6 +66,10 @@ const FileInputModal = () => {
     setLoading(false);
   };
 
+  const handleCloseModal = () => {
+    dispatch(toggleModal(MODAL_NAMES.FILE_INPUT_MODAL, false));
+  };
+
   const onClose = async () => {
     if (currentConversationId) {
       await dispatch(fetchMessages(currentConversationId));
@@ -130,7 +134,11 @@ const FileInputModal = () => {
           </div>
 
           <div className="w-full flex flex-row justify-end gap-2">
-            <Button disabled={loading} variant="secondary">
+            <Button
+              onClick={handleCloseModal}
+              disabled={loading}
+              variant="secondary"
+            >
               Cancel
             </Button>
             <Button

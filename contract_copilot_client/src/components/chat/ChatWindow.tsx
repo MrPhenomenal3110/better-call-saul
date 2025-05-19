@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import type { AppDispatch } from "@stores/index";
@@ -13,10 +13,13 @@ import { useToast } from "@hooks/useToast";
 import { selectChatError, selectMessages } from "@selectors/chat";
 import { selectCurrentConversationId } from "@selectors/conversations";
 import { fetchMessages } from "@stores/chat";
+import TypingIndicator from "@components/TypingIndicator";
 
 const ChatWindow = () => {
   const dispatch = useDispatch<AppDispatch>();
   const toast = useToast();
+  const [isAiTyping, setIsAiTyping] = useState(false);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
 
   const currentConversationId = useSelector(selectCurrentConversationId);
   const messages = useSelector(selectMessages);
@@ -34,6 +37,12 @@ const ChatWindow = () => {
     }
   }, [messagesError]);
 
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isAiTyping]);
+
   return (
     <div className="flex-1 flex flex-col justify-between bg-gray-200">
       <ChatHeader />
@@ -46,6 +55,13 @@ const ChatWindow = () => {
             toolUsed={msg.toolUsed}
           />
         ))}
+        {isAiTyping && (
+          <div className="w-full flex flex-row items-center justify-start">
+            <div className="w-fit rounded-lg bg-white">
+              <TypingIndicator />
+            </div>
+          </div>
+        )}
         {messages.length === 0 && (
           <div className="w-full h-full flex flex-col gap-4 items-center justify-center">
             <img className="w-16 h-16 opacity-50" src={Plus} alt="" />
@@ -55,8 +71,9 @@ const ChatWindow = () => {
             </div>
           </div>
         )}
+        <div ref={bottomRef} />
       </div>
-      <ChatInput />
+      <ChatInput isAiTyping={isAiTyping} setIsAiTyping={setIsAiTyping} />
     </div>
   );
 };
