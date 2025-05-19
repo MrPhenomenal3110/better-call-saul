@@ -49,8 +49,9 @@ const ChatWindow = () => {
         {messages.length === 0 && (
           <div className="w-full h-full flex flex-col gap-4 items-center justify-center">
             <img className="w-16 h-16 opacity-50" src={Plus} alt="" />
-            <div className="text-gray-600 font-extrabold">
-              Start a new conversation by sending a message
+            <div className="text-gray-600 font-extrabold text-center">
+              Start a new conversation by sending a message or uploading a legal
+              document that you need help with
             </div>
           </div>
         )}
