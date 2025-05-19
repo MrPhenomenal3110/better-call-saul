@@ -5,13 +5,7 @@ export const intentParser = StructuredOutputParser.fromZodSchema(
   z.object({
     intents: z
       .array(
-        z.enum([
-          "basic",
-          "clause-analysis",
-          "checklist",
-          "loophole-detector",
-          "pdf-chat",
-        ])
+        z.enum(["general", "summary", "qa", "checklist", "loophole", "setName"])
       )
       .describe("List of relevant user intents"),
   })

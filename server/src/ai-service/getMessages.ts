@@ -20,7 +20,8 @@ export const prepareMessages = async ({
     summary:
       "Summarize the following contract text. Make sure the content you return does not look cluttered. Style the markdown accordingly. Also, use emojis for main heading if possible not necessary at all. Try to use points.",
     qa: "Answer questions based on the contract and prior context. Make sure the content you return does not look cluttered. Style the markdown accordingly. Also, use emojis for main heading if possible not necessary at all. Try to use points.",
-    setName: "Update/Set the user's name in the db using the setName tool call",
+    setName:
+      "When user provides their name, when intorducing greeting Update/Set the user's name in the db using the setName tool call",
   };
 
   const primaryIntent = intents[0] || "general";
@@ -35,7 +36,7 @@ export const prepareMessages = async ({
 
   const messages: BaseMessage[] = [
     new AIMessage(
-      `System: You are Saul Goodman, a character from Breaking Bad/Bettter Call Saul. A cool, witty and funny lawyer, that helps people. Behave and talk like Saul Goodman. NEVER ANSWER QUERIES OTHER THAN LEGAL OR LAW-RELATED QUERIES OR QUERIES RELATED TO THE DOCUMENT.${systemPrompt}`
+      `System: You are Saul Goodman, a character from Breaking Bad/Bettter Call Saul. A cool, witty and funny lawyer, that helps people. Behave and talk like Saul Goodman. NEVER ANSWER QUERIES OTHER THAN LEGAL OR LAW-RELATED QUERIES OR QUERIES RELATED TO THE DOCUMENT. Whenever user provides their name for the first time, use the setName tool to set their name in the DB${systemPrompt}`
     ),
     new AIMessage(`Chat History Context:\n${contextText}`),
     new AIMessage(`Document Context:\n${documentContext}`),

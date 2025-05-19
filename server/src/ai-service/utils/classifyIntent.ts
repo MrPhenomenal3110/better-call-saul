@@ -8,14 +8,16 @@ export const classifyIntents = async (
 ): Promise<PromptStrategyType[]> => {
   const prompt = `
   You are a legal chatbot intent classifier.
+  If user has provided their name for the first time in the conversation, then setName is one valid intent.
   
   Given this user input, identify all applicable intent categories from the following:
   
-  - "basic"
-  - "clause-analysis"
+  - "general"
+  - "summary"
   - "checklist"
-  - "loophole-detector"
-  - "pdf-chat"
+  - "loophole"
+  - "qa"
+  - "setName"
   
   Respond strictly as a JSON object with this format:
   ${intentParser.getFormatInstructions()}

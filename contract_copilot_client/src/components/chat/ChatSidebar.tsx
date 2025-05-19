@@ -61,7 +61,7 @@ const ChatSidebar = () => {
               }
             )}
           >
-            {showPreview(conversation.messages?.[0].content, 25) || "New chat"}
+            {showPreview(conversation?.messages?.[0].content, 25) || "New chat"}
           </div>
         ))}
       </div>
