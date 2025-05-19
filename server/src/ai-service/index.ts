@@ -47,8 +47,6 @@ export const invokeChat = async ({
         intents,
       });
 
-      console.log("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG", contractId);
-
       if (contractId) {
         await saveMessage({
           conversationId: sessionId,

@@ -24,7 +24,6 @@ export async function handleContractUpload({
   title,
   sessionId,
 }: UploadContractParams) {
-  console.log(" ggggggggggggg ", sessionId);
   const safeFilename = slugify(originalFilename, { lower: true, strict: true });
   const key = `contracts/${userId}-${sessionId}-${safeFilename}-${new Date().toISOString()}`;
   const { size } = statSync(filePath);

@@ -3,8 +3,6 @@ import prisma from "@lib/prisma";
 import type { ChatRequest, ConversationListRequest } from "@models/chat";
 
 export const handleChat = async (input: ChatRequest) => {
-  console.log("gggg", input);
-  console.log("New Chat GG");
   let conversation = await prisma.conversation.findUnique({
     where: {
       id: input.sessionId,
